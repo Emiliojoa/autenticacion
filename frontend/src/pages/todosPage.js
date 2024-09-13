@@ -25,6 +25,9 @@ export const todosPage = () => {
   btnHome.textContent = "Home";
   container.appendChild(btnHome);
   
+  const addButton = document.createElement("button");
+  addButton.classList.add("bg-green-500", "text-white", "p-2", "rounded", "mb-4");
+  addButton.textContent = "Add Todo";
 
   btnHome.addEventListener("click", () => {
     window.location.pathname = "/home";
@@ -34,6 +37,8 @@ export const todosPage = () => {
 
   title.classList.add("text-3xl", "font-bold", "mb-4");
 title.textContent = "List of Todos";
+
+
 
 const table = document.createElement("table");
 
@@ -193,6 +198,7 @@ fetch("http://localhost:4000/todos", {
       
               // Cerrar el modal
               document.body.removeChild(modal);
+
             })
             .catch((error) => {
               alert(error.message);
@@ -200,12 +206,68 @@ fetch("http://localhost:4000/todos", {
         });
       }
 
-      const addButton = document.createElement("button");
-      addButton.classList.add("bg-green-500", "text-white", "px-2", "py-1", "rounded");
-      addButton.textContent = "Agregar";
       addButton.addEventListener("click", () => {
-        // Mostrar formulario modal para agregar una nueva tarea
-        showAddTodoModal();
+        const modal = document.createElement("div");
+        modal.classList.add("fixed", "inset-0", "bg-gray-600", "bg-opacity-50", "flex", "items-center", "justify-center");
+      
+        const modalContent = document.createElement("div");
+        modalContent.classList.add("bg-white", "p-6", "rounded", "shadow-md", "w-1/3");
+      
+        const form = document.createElement("form");
+      
+        const titleLabel = document.createElement("label");
+        titleLabel.textContent = "Title:";
+        titleLabel.classList.add("block", "mb-2");
+      
+        const titleInput = document.createElement("input");
+        titleInput.type = "text";
+        titleInput.classList.add("border", "p-2", "w-full", "mb-4");
+      
+        const completedLabel = document.createElement("label");
+        completedLabel.textContent = "Completed:";
+        completedLabel.classList.add("block", "mb-2", "mt-4");
+      
+        const completedInput = document.createElement("input");
+        completedInput.type = "checkbox";
+        completedInput.classList.add("mb-4", "mt-2");
+      
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.textContent = "Agregar";
+        submitButton.classList.add("bg-blue-500", "text-white", "px-4", "py-2", "rounded");
+      
+        form.append(titleLabel, titleInput, completedLabel, completedInput, submitButton);
+        modalContent.appendChild(form);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+      
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+      
+          const newTodo = {
+            title: titleInput.value,
+            completed: completedInput.checked,
+          };
+      
+          fetch("http://localhost:4000/todos", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(newTodo),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("No deje espacios en blanco");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              const tr = document.createElement("tr");
+      
+              const td1 = document.createElement("td");
+              td1.classList.add("border", "px-4", "py
       });
 
       td5.append(deleteButton, updateButton);
@@ -214,6 +276,7 @@ fetch("http://localhost:4000/todos", {
       tbody.appendChild(tr);
     });
   });
+  container.appendChild(addButton); 
 
   container.appendChild(title);
   container.appendChild(table);
